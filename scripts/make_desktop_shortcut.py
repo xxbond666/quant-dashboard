@@ -36,7 +36,7 @@ try:
 except ImportError:
     Image = None
 
-APP_NAME = "stock-analysis"
+APP_NAME = "Stock Quant Analysis"
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DASHBOARD_PYW = os.path.join(PROJECT, "dashboard_window.pyw")
 ICON = os.path.join(PROJECT, "public", "assets", "icons", "app.ico")
