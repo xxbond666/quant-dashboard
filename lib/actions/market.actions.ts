@@ -264,7 +264,8 @@ function parseCalendarCsv(csv: string): EarningsCalendarEntry[] {
 
 async function getEarningsCalendarFromAV(pool: Set<string>): Promise<EarningsCalendarResult> {
     if (!AV_KEY) {
-        return { ok: false, days: [], total: 0, error: '业绩日历暂不可用（Finnhub / Alpha Vantage 均失败）' };
+        return { ok: false, days: [], total: 0,
+                 error: '业绩日历暂不可用：请在 .env.local 配置 NEXT_PUBLIC_FINNHUB_API_KEY（免费申请入口见 .env.example）' };
     }
     const url =
         `https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=3month&apikey=${AV_KEY}`;

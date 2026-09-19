@@ -47,6 +47,9 @@ __pycache__/
 # 调试截图（浏览器验证产物，不入库）
 /_shots/
 
+# 运行时本地数据（默认 APP_DATA_DIR=./data）
+/data/
+
 # IDE
 .idea/
 .vscode/

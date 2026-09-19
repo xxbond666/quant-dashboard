@@ -77,6 +77,7 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
                         quarters={company.earnings ?? []}
                         income={company.income}
                         analyst={company.analyst}
+                        avKeyConfigured={company.avKeyConfigured}
                         locale={locale}
                     />
                     <TradingViewWidget

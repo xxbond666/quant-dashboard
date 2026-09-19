@@ -25,11 +25,13 @@ export function EarningsCompareCard({
     quarters,
     income,
     analyst,
+    avKeyConfigured = true,
     locale = 'zh',
 }: {
     quarters: EarningsQuarter[];
     income: IncomeQuarter[] | null;
     analyst: AnalystView | null;
+    avKeyConfigured?: boolean;
     locale?: Locale;
 }) {
     const en = locale === 'en';
@@ -102,7 +104,11 @@ export function EarningsCompareCard({
                     />
                 </div>
             ) : (
-                <p className="mt-4 text-sm text-gray-500">{en ? 'No EPS data' : '暂无 EPS 数据'}</p>
+                <p className="mt-4 text-sm text-gray-500">
+                    {en
+                        ? 'Set NEXT_PUBLIC_FINNHUB_API_KEY in .env.local to enable EPS estimate-vs-actual charts (free key: finnhub.io)'
+                        : '在 .env.local 配置 NEXT_PUBLIC_FINNHUB_API_KEY 后显示 EPS 预期vs实际图（免费申请见 .env.example）'}
+                </p>
             )}
 
             {revGroups.length ? (
@@ -119,9 +125,13 @@ export function EarningsCompareCard({
                 </div>
             ) : (
                 <p className="mt-6 text-sm text-gray-500">
-                    {en
-                        ? 'Revenue history unavailable (Alpha Vantage daily quota exhausted — it will appear automatically once quota resets)'
-                        : '营收历史暂不可用（Alpha Vantage 免费额度 25 次/日已用完，额度重置后自动出现）'}
+                    {!avKeyConfigured
+                        ? (en
+                            ? 'Set ALPHA_VANTAGE_API_KEY in .env.local to enable revenue / net-income charts (free 25 req/day)'
+                            : '在 .env.local 配置 ALPHA_VANTAGE_API_KEY 后显示营收/净利润图（免费 25 次/日，申请见 .env.example）')
+                        : (en
+                            ? 'Revenue history unavailable (Alpha Vantage daily quota exhausted — it will appear automatically once quota resets)'
+                            : '营收历史暂不可用（Alpha Vantage 免费额度 25 次/日已用完，额度重置后自动出现）')}
                 </p>
             )}
 

@@ -34,6 +34,29 @@ npm start
 - 某些地区浏览器直连 TradingView 组件不通：设置用户环境变量 `DASH_PROXY=http://127.0.0.1:7897`
   （任意代理）后重启启动脚本即可；不设则不注入代理参数。
 
+## 零配置体验（未填 key / 未启后端时会看到什么）
+
+所有外部数据源缺失时页面**不会崩**，而是显示带指引的空态：
+
+| 位置 | 未配置时的表现 | 解锁方式 |
+|---|---|---|
+| 封面数据墙 | 数字显示 `—` | `NEXT_PUBLIC_FINNHUB_API_KEY` |
+| 业绩日历 | 提示去配置 Finnhub key | 同上 |
+| 个股 EPS 对比图 | 提示去配置 Finnhub key | 同上 |
+| 个股营收/净利润图 | 提示去配置 AV key | `ALPHA_VANTAGE_API_KEY` |
+| 宏观页 | 每卡提示去配置 FRED key | `FRED_API_KEY` |
+| 量化/分析/决策 | 琥珀色连接失败面板（含 curl 自检命令） | 启动 6901 后端（可选） |
+| 自选股 | 空列表 + 搜索框可加股 | 无需 key |
+
+## 故障排查
+
+- **安装依赖慢/失败**：本仓库不锁定 registry；中国大陆用户可 `npm config set registry https://registry.npmmirror.com`。
+- **npm 提示 `allow-scripts` / sharp 待批准**：新版 npm 的脚本审批提示，可忽略（本项目不依赖 sharp 运行时）；或执行 `npm approve-scripts` 批准。
+- **构建期报字体下载失败**：`next/font` 需一次性联网拉 Google Fonts；离线环境请先在有网机器构建，或临时注释 `app/layout.tsx` 中 Space_Grotesk。
+- **TradingView 组件空白**：网络直连不通所致，设 `DASH_PROXY` 后重启（见快速开始）。
+- **端口占用**：`npm start -- -p 3001` 换端口。
+- **Windows 专属脚本**：`scripts/start_all.ps1` 与 `dashboard_window.pyw` 仅 Windows；Linux/macOS 直接用 `npm start`。
+
 ## 页面与数据源
 
 | 页面 | 路由 | 数据源（主 → 备） |

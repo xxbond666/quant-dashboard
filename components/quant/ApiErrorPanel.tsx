@@ -18,6 +18,11 @@ export function ApiErrorPanel({
             <p className="mt-2 text-sm text-foreground/90">{error}</p>
             <div className="mt-4 space-y-1 text-xs text-muted-foreground">
                 <p>
+                    {zh
+                        ? '该后端为可选组件（qlib 信号 / TradingAgents 分析）；不部署时其余页面完全可用，接口契约见 API_DOCS.md。'
+                        : 'This backend is optional (qlib signals / TradingAgents). All other pages work without it; see API_DOCS.md for the contract.'}
+                </p>
+                <p>
                     {zh ? '当前后端地址：' : 'Backend: '}
                     <span className="font-mono text-muted-foreground">{quantApi.base}</span>
                 </p>

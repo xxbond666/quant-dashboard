@@ -61,6 +61,8 @@ export interface CompanyInfo {
     earnings: EarningsQuarter[] | null;
     income: IncomeQuarter[] | null;
     analyst: AnalystView | null;
+    /** ALPHA_VANTAGE_API_KEY 是否已配置（供前端区分「没配 key」与「额度用完」两种空态文案） */
+    avKeyConfigured: boolean;
     degraded: boolean;
 }
 
@@ -165,7 +167,8 @@ async function fetchAvIncome(symbol: string): Promise<IncomeQuarter[] | null> {
 export async function getCompanyInfo(symbol: string): Promise<CompanyInfo> {
     const s = sym(symbol);
     if (!s) {
-        return { symbol: s, earnings: null, income: null, analyst: null, degraded: false };
+        return { symbol: s, earnings: null, income: null, analyst: null,
+                 avKeyConfigured: Boolean(AV_KEY), degraded: false };
     }
 
     const [earnings, income, analyst] = await Promise.all([
@@ -179,6 +182,7 @@ export async function getCompanyInfo(symbol: string): Promise<CompanyInfo> {
         earnings,
         income,
         analyst,
+        avKeyConfigured: Boolean(AV_KEY),
         degraded: !earnings?.length && !income?.length,
     };
 }

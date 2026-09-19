@@ -106,7 +106,8 @@ function thinOldPoints(pts: MacroPoint[]): MacroPoint[] {
 
 async function fetchSeries(s: SeriesDef): Promise<MacroSeries> {
     if (!FRED_KEY) {
-        return { ...s, latest: null, prev: null, points: [], error: '未配置 FRED_API_KEY' };
+        return { ...s, latest: null, prev: null, points: [],
+                 error: '未配置 FRED_API_KEY（免费申请入口见 .env.example）' };
     }
     const url =
         `${FRED_BASE}?series_id=${s.id}&observation_start=${s.start}` +
