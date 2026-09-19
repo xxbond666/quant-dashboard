@@ -22,21 +22,8 @@ export interface WatchlistItem {
     addedAt: string;
 }
 
-export interface AlertItem {
-    _id: string;
-    userId: string;
-    symbol: string;
-    targetPrice: number;
-    condition: 'ABOVE' | 'BELOW';
-    active: boolean;
-    triggered: boolean;
-    expiresAt: string;
-    createdAt: string;
-}
-
 interface AppState {
     watchlist: WatchlistItem[];
-    alerts: AlertItem[];
 }
 
 function read(): AppState {
@@ -45,10 +32,9 @@ function read(): AppState {
         const parsed = JSON.parse(raw) as Partial<AppState>;
         return {
             watchlist: Array.isArray(parsed.watchlist) ? parsed.watchlist : [],
-            alerts: Array.isArray(parsed.alerts) ? parsed.alerts : [],
         };
     } catch {
-        return { watchlist: [], alerts: [] };
+        return { watchlist: [] };
     }
 }
 
@@ -111,51 +97,5 @@ export const store = {
 
     watchlistSymbols(userId: string = LOCAL_USER_ID): string[] {
         return store.listWatchlist(userId).map((i) => i.symbol);
-    },
-
-    // ── 预警 ────────────────────────────────────────────────
-    listAlerts(userId: string = LOCAL_USER_ID): AlertItem[] {
-        return read()
-            .alerts.filter((a) => a.userId === userId)
-            .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-    },
-
-    createAlert(params: {
-        userId: string;
-        symbol: string;
-        targetPrice: number;
-        condition: 'ABOVE' | 'BELOW';
-    }): AlertItem {
-        const state = read();
-        const item: AlertItem = {
-            _id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`,
-            userId: params.userId,
-            symbol: normalize(params.symbol),
-            targetPrice: params.targetPrice,
-            condition: params.condition,
-            active: true,
-            triggered: false,
-            // 与原 Mongoose 模型一致：默认 90 天过期
-            expiresAt: new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
-            createdAt: now(),
-        };
-        state.alerts.push(item);
-        write(state);
-        return item;
-    },
-
-    deleteAlert(alertId: string): void {
-        const state = read();
-        state.alerts = state.alerts.filter((a) => a._id !== alertId);
-        write(state);
-    },
-
-    setAlertActive(alertId: string, active: boolean): void {
-        const state = read();
-        const a = state.alerts.find((x) => x._id === alertId);
-        if (a) {
-            a.active = active;
-            write(state);
-        }
     },
 };

@@ -1,9 +1,7 @@
 import React, { Suspense } from 'react';
 import { getUserWatchlist } from '@/lib/actions/watchlist.actions';
-import { getUserAlerts } from '@/lib/actions/alert.actions';
 import { getNews } from '@/lib/actions/finnhub.actions';
 import WatchlistManager from '@/components/watchlist/WatchlistManager';
-import AlertsPanel from '@/components/watchlist/AlertsPanel';
 import NewsGrid from '@/components/watchlist/NewsGrid';
 import SearchCommand from '@/components/SearchCommand';
 import { Loader2 } from 'lucide-react';
@@ -18,11 +16,7 @@ export default async function WatchlistPage() {
     const userId = LOCAL_USER_ID;
     const { locale, t } = await getI18n();
 
-    const [watchlistItems, alerts] = await Promise.all([
-        getUserWatchlist(userId),
-        getUserAlerts(userId),
-    ]);
-
+    const watchlistItems = await getUserWatchlist(userId);
     const watchlistSymbols = watchlistItems.map((item) => item.symbol);
 
     // 只拉一次：有自选就取公司新闻，getNews 内部自选为空/无命中时自动回退全市场新闻；
@@ -44,23 +38,13 @@ export default async function WatchlistPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Main Content - Watchlist Table */}
-                <div className="lg:col-span-3 space-y-8">
-                    <div className="space-y-6">
-                        <WatchlistManager initialItems={watchlistItems} userId={userId} locale={locale} />
-                    </div>
+            {/* 单列布局：自选管理（含 TV 报价组件）→ 新闻 */}
+            <div className="space-y-8">
+                <WatchlistManager initialItems={watchlistItems} userId={userId} locale={locale} />
 
-                    {/* News Section */}
-                    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-muted-foreground" /></div>}>
-                        <NewsGrid news={relevantNews || []} />
-                    </Suspense>
-                </div>
-
-                {/* Sidebar - Alerts */}
-                <div className="lg:col-span-1">
-                    <AlertsPanel alerts={alerts} />
-                </div>
+                <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-muted-foreground" /></div>}>
+                    <NewsGrid news={relevantNews || []} locale={locale} />
+                </Suspense>
             </div>
         </div>
     );

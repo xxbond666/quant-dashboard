@@ -76,7 +76,7 @@ It keeps the excellent UI foundation and TradingView widget integration, removes
 
 | Module | Highlights |
 |---|---|
-| 📈 Cover stats wall | S&P 500 (VOO) / Nasdaq 100 (QQQ) / BTC / Gold / Crude Oil — live monospace figures, click-through to TradingView |
+| 📈 Cover stats wall | S&P 500 (VOO) / Nasdaq 100 (QQQ) / BTC / Gold / Crude Oil — live monospace figures, **auto-refresh every 60 s**, click-through to TradingView |
 | 🔥 Sector heatmap | TradingView SPX500 heatmap, full-width immersive panel |
 | 🗓️ Earnings calendar | Futu-style month grid: pick a day → logos, names, tickers, pre/after-market badges; watchlist first |
 | 📰 News | Watchlist company news + market top stories (TradingView Timeline) |
@@ -86,7 +86,7 @@ It keeps the excellent UI foundation and TradingView widget integration, removes
 | 🧮 Quant | Model status, bull/bear leaderboards, dense pool ranking table with **pool search**, universe maintenance, train & export |
 | 🧠 Analysis console | TradingAgents progress timeline (stage states, current step, logs); one-click PDF report when done |
 | ️ Decision fusion | qlib cross-sectional signals × TradingAgents verdicts; PDFs served inline |
-| ⭐ Watchlist & alerts | Watchlist auto-joins the quant universe; price alert CRUD (trigger engine on roadmap) |
+| ⭐ Watchlist | Auto-joins the quant universe; one-click add/remove; linked company news |
 | 🌗 Bilingual UI | zh / en toggle in the header; TradingView widgets localized to `zh_CN` |
 | ⚡ Instant nav | Tiered ISR caching — every page responds in 10–80 ms |
 
@@ -123,7 +123,7 @@ Browser (talks to :3000 only)
    │
    ▼
 Next.js 15 server (server actions as proxy layer, tiered ISR cache)
-   ├── Local JSON store .......... watchlist / alerts / name table / income cache
+   ├── Local JSON store .......... watchlist / name table / income cache
    ├── Finnhub / Alpha Vantage / FRED ....... free market & macro data
    ├── TradingView widgets ..... charts / heatmap / profile (browser-direct, proxy-able)
    └── 127.0.0.1:6901 (optional) .... Python quant console
@@ -240,6 +240,16 @@ TradingAgents multi-agent analysis with PDF reports. Contract: [API_DOCS.md](./A
   **everything else works normally**
 - With it: reports open inline via `/api/report/{name}`; the analysis page shows a stage-level timeline
 
+**Demo mode (see all three pages without qlib)**
+
+```bash
+node scripts/mock-backend.mjs        # binds 127.0.0.1:6901 with deterministic fake data
+# or: PORT=6902 node scripts/mock-backend.mjs + QUANT_API_BASE=http://127.0.0.1:6902 in .env.local
+```
+
+The quant / analysis / decisions pages then render in full (model card, leaderboards, ranking
+table, fusion cards) with clearly-marked MOCK data.
+
 ## 🎨 Design System (Mono Glass)
 
 - **Monochrome chrome**: charcoal `#08080a` + six-step cool grays + frosted panels (blur 14 px, 1 px inner stroke, single-light-source tinted shadows)
@@ -284,7 +294,6 @@ CI (GitHub Actions) runs typecheck → lint → test → build on every push/PR.
 
 ## 🗺️ Roadmap
 
-- [ ] Alert trigger engine (local polling + desktop notification)
 - [ ] Earnings calendar export (.ics)
 - [ ] Custom macro baskets & comparison charts
 - [ ] Full-text search over local PDF reports

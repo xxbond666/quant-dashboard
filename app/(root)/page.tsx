@@ -12,6 +12,7 @@ import {
 } from "@/lib/actions/market.actions";
 import EarningsCalendarCard from "@/components/home/EarningsCalendarCard";
 import CoverStats from "@/components/home/CoverStats";
+import { fetchCoverQuotes } from "@/lib/cover";
 import { WatchlistNews } from "@/components/home/WatchlistNews";
 
 // ISR：60s 缓存。点击导航命中缓存秒开；数据新鲜度由 fetch 层 revalidate 兼顾
@@ -25,17 +26,19 @@ const Home = async () => {
     const watchlist = await getUserWatchlist('local');
     const watchlistSymbols = watchlist.map((i) => i.symbol);
 
-    // 日历（Finnhub 7 窗并发）与新闻（8 路并发）互不依赖，并行拉取省一半首屏时间
-    const [calendar, news] = await Promise.all([
+    // 日历（Finnhub 7 窗并发）与新闻（8 路并发）互不依赖，并行拉取省一半首屏时间；
+    // 封面首屏数据同步并行拉取，客户端之后每 60s 轮询 /api/cover 自刷新
+    const [calendar, news, cover] = await Promise.all([
         getEarningsCalendarAction(watchlistSymbols),
         getNewsForSymbolsAction(
             watchlistSymbols.length ? watchlistSymbols.slice(0, 8) : ['NVDA', 'AAPL', 'MSFT'], 3),
+        fetchCoverQuotes(),
     ]);
 
     return (
         <div className="flex min-h-screen home-wrapper">
-            {/* 封面：数据墙（Mono Glass） */}
-            <CoverStats zh={zh} />
+            {/* 封面：数据墙（Mono Glass，客户端 60s 自刷新） */}
+            <CoverStats zh={zh} initial={cover} />
 
             {/* 01 板块热力图：独占整行 */}
             <section className="grid w-full gap-8 home-section">

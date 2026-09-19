@@ -74,7 +74,7 @@ stock-quant-analysis 派生自 [OpenStock](https://github.com/Open-Dev-Society/O
 
 | 模块 | 说明 |
 |---|---|
-| 📈 封面数据墙 | S&P 500(VOO) / Nasdaq 100(QQQ) / BTC / 黄金 / 原油 五格实时大数字，点击直达 TradingView |
+| 📈 封面数据墙 | S&P 500(VOO) / Nasdaq 100(QQQ) / BTC / 黄金 / 原油 五格实时大数字，**每 60s 自动刷新**，点击直达 TradingView |
 | 🔥 板块热力图 | TradingView SPX500 热力图，中文渲染，整行沉浸 |
 | 🗓️ 业绩日历 | 富途式月历：选日期看当日财报，公司 logo + 名称 + 代码 + 盘前/盘后标记，自选池优先 |
 | 📰 新闻聚合 | 自选股公司新闻 + 市场头条（TradingView Timeline） |
@@ -84,7 +84,7 @@ stock-quant-analysis 派生自 [OpenStock](https://github.com/Open-Dev-Society/O
 | 🧮 量化页 | 模型状态卡、多空榜、全池密集排名表 + **股池专属搜索栏**、股票池维护、训练导出 |
 | 🧠 分析控制台 | TradingAgents 多智能体进度时间线（阶段状态/当前步骤/日志），完成后一键打开 PDF 报告 |
 | ⚖️ 决策融合 | qlib 截面信号 × TradingAgents 定论，报告 PDF 内联直读 |
-| ⭐ 自选与预警 | 自选联动股票池；价格预警 CRUD（触发器在路线图中） |
+| ⭐ 自选股 | 自选联动股票池；一键增删；联动公司新闻聚合 |
 | 🌗 中英双语 | 页头一键切换，TradingView 组件同步 `zh_CN` |
 | ⚡ 秒级导航 | ISR 分级缓存，全站页面 10–80ms 响应 |
 
@@ -121,7 +121,7 @@ stock-quant-analysis 派生自 [OpenStock](https://github.com/Open-Dev-Society/O
    │
    ▼
 Next.js 15 服务端（server actions 作代理层，ISR 分级缓存）
-   ├── 本地 JSON 存储 ............ 自选 / 预警 / 名称表 / 营收缓存
+   ├── 本地 JSON 存储 ............ 自选 / 名称表 / 营收缓存
    ├── Finnhub / Alpha Vantage / FRED ....... 免费行情与宏观
    ├── TradingView widgets ..... 图表 / 热力图 / 简介（浏览器直连，可配代理）
    └── 127.0.0.1:6901（可选）.... Python 量化控制台
@@ -235,6 +235,16 @@ Finnhub 日历单次上限 1500 条且只保留时间靠后一端（故按 14 �
 - 不部署它：三页显示琥珀色连接面板（含 `curl` 自检命令），**其余功能完全正常**
 - 部署它：报告 PDF 经 `/api/report/{name}` 内联打开；分析页提供阶段级进度时间线
 
+**演示模式（无 qlib 环境也能看全三页）**
+
+```bash
+node scripts/mock-backend.mjs        # 监听 127.0.0.1:6901，确定性假数据
+# 或换端口：PORT=6902 node scripts/mock-backend.mjs + .env.local 设 QUANT_API_BASE=http://127.0.0.1:6902
+```
+
+启动后量化 / 分析 / 决策三页立即有完整形态（模型卡 / 榜单 / 排名表 / 融合卡片），
+数据标注 MOCK，仅用于界面演示。
+
 ## 🎨 设计系统（Mono Glass）
 
 - **单色 chrome**：炭黑底 `#08080a` + 六级冷灰 + 毛玻璃面板（blur 14px + 1px 内描边 + 单光源染色阴影）
@@ -278,7 +288,6 @@ CI（GitHub Actions）在每个 push/PR 上跑 typecheck → lint → test → b
 
 ## 🗺️ 路线图
 
-- [ ] 价格预警触发器（本地轮询 + 桌面通知）
 - [ ] 业绩日历订阅导出（.ics）
 - [ ] 宏观序列自定义组合与对比图
 - [ ] 报告全文检索（本地 PDF 索引）

@@ -3,17 +3,19 @@
 import React from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ExternalLink } from "lucide-react";
+import { translate, type Locale } from "@/lib/i18n/messages";
 
 interface NewsGridProps {
     news: MarketNewsArticle[];
+    locale?: Locale;
 }
 
-export default function NewsGrid({ news }: NewsGridProps) {
+export default function NewsGrid({ news, locale = 'zh' }: NewsGridProps) {
     if (!news || news.length === 0) return null;
 
     return (
         <div className="mt-8">
-            <h2 className="text-xl font-bold text-foreground mb-4">Market News</h2>
+            <h2 className="text-xl font-bold text-foreground mb-4">{translate(locale, 'watchlist.newsTitle')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {news.map((item, idx) => (
                     <a
