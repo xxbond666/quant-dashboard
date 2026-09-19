@@ -55,3 +55,6 @@ __pycache__/
 .vscode/
 
 !.env.example
+
+# 桌面快捷方式脚本生成的哈希图标副本（每机产物）
+/public/assets/icons/app-*.ico
