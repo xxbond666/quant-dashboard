@@ -328,6 +328,13 @@ export default function AnalysisConsole({
                         {progress.fatal ? (
                             <p className="mt-4 rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-300">
                                 {progress.fatal}
+                                {/ConnectionRefused|WinError 10061|api\/tags|api\/generate|Errno 10061/i.test(progress.fatal) ? (
+                                    <span className="mt-2 block text-amber-300">
+                                        {zh
+                                            ? '提示：本地 Ollama 未启动（连接被拒绝）。启动 Ollama（桌面图标或 ollama serve）后重新点击开始分析。'
+                                            : 'Hint: local Ollama is not running (connection refused). Start Ollama (desktop icon or `ollama serve`), then retry.'}
+                                    </span>
+                                ) : null}
                             </p>
                         ) : null}
 
